@@ -1,7 +1,10 @@
-
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Star, Play, ChevronLeft, ChevronRight, Plus, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SplashScreen from "./SplashScreen";
+import SearchBar from "./SearchBar";
+import MovieModal from "./MovieModal";
+import Pagination from "./Pagination";
 
 // Generate 5000+ movies and shows
 const generateContent = () => {
@@ -37,7 +40,7 @@ const generateContent = () => {
   return content;
 };
 
-const MovieCard = ({ movie, size = "md" }) => {
+const MovieCard = ({ movie, size = "md", onMoreInfo, onAddToWatchlist }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   const sizeClasses = {
@@ -89,10 +92,16 @@ const MovieCard = ({ movie, size = "md" }) => {
               <button className="bg-white text-black p-2 rounded-full hover:bg-gray-200 transition-colors">
                 <Play className="w-4 h-4" />
               </button>
-              <button className="bg-gray-800/80 text-white p-2 rounded-full hover:bg-gray-700 transition-colors">
+              <button 
+                onClick={() => onAddToWatchlist(movie)}
+                className="bg-gray-800/80 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+              >
                 <Plus className="w-4 h-4" />
               </button>
-              <button className="bg-gray-800/80 text-white p-2 rounded-full hover:bg-gray-700 transition-colors">
+              <button 
+                onClick={() => onMoreInfo(movie)}
+                className="bg-gray-800/80 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+              >
                 <Info className="w-4 h-4" />
               </button>
             </div>
@@ -103,7 +112,7 @@ const MovieCard = ({ movie, size = "md" }) => {
   );
 };
 
-const MovieRow = ({ title, movies, size = "md" }) => {
+const MovieRow = ({ title, movies, size = "md", onMoreInfo, onAddToWatchlist }) => {
   const scrollRef = useRef(null);
   
   const scroll = (direction) => {
@@ -133,7 +142,13 @@ const MovieRow = ({ title, movies, size = "md" }) => {
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} size={size} />
+            <MovieCard 
+              key={movie.id} 
+              movie={movie} 
+              size={size} 
+              onMoreInfo={onMoreInfo}
+              onAddToWatchlist={onAddToWatchlist}
+            />
           ))}
         </div>
         
@@ -189,6 +204,13 @@ const Hero = ({ featuredMovie }) => {
 export default function StarnyxApp() {
   const [content] = useState(() => generateContent());
   const [activeSection, setActiveSection] = useState("home");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [watchlist, setWatchlist] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
   
   const navItems = [
     { name: "Home", key: "home" },
@@ -198,7 +220,62 @@ export default function StarnyxApp() {
     { name: "My List", key: "mylist" }
   ];
   
+  // Filter content based on active section and search term
+  const getFilteredContent = () => {
+    let filtered = content;
+    
+    // Filter by section
+    if (activeSection === "mylist") {
+      filtered = watchlist;
+    } else if (activeSection !== "home") {
+      filtered = content.filter(item => item.category === activeSection);
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(item => 
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.genre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return filtered;
+  };
+  
+  const filteredContent = getFilteredContent();
+  const totalPages = Math.ceil(filteredContent.length / itemsPerPage);
+  const paginatedContent = filteredContent.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
   const featuredMovie = content[0];
+  
+  const handleAddToWatchlist = (movie) => {
+    setWatchlist(prev => {
+      const exists = prev.find(item => item.id === movie.id);
+      if (exists) {
+        return prev.filter(item => item.id !== movie.id);
+      }
+      return [...prev, movie];
+    });
+  };
+  
+  const handleMoreInfo = (movie) => {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  };
+  
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+    setCurrentPage(1);
+    setSearchTerm("");
+  };
+  
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
   
   // Create different sections of content
   const trendingNow = content.filter(item => item.isTrending).slice(0, 20);
@@ -212,6 +289,10 @@ export default function StarnyxApp() {
   const originals = content.filter(item => item.isOriginal).slice(0, 20);
   const kids = content.filter(item => item.category === "Kids").slice(0, 20);
   
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+  
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
@@ -219,30 +300,33 @@ export default function StarnyxApp() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <Star className="text-blue-400 w-8 h-8 animate-pulse" />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                STARNYX
-              </h1>
+              <img 
+                src="/lovable-uploads/4f557a03-47e6-462c-88e1-b192c9d1fa57.png" 
+                alt="STARNYX" 
+                className="h-8 w-auto"
+              />
             </div>
             <div className="flex gap-6">
               {navItems.map((item) => (
                 <button
                   key={item.key}
-                  onClick={() => setActiveSection(item.key)}
+                  onClick={() => handleSectionChange(item.key)}
                   className={cn(
                     "text-sm font-medium transition-colors hover:text-white",
                     activeSection === item.key ? "text-white" : "text-gray-400"
                   )}
                 >
-                  {item.name}
+                  {item.name} {item.key === "mylist" && watchlist.length > 0 && (
+                    <span className="ml-1 bg-blue-600 text-xs px-1.5 py-0.5 rounded-full">
+                      {watchlist.length}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="text-gray-400 hover:text-white transition-colors">
-              Search
-            </button>
+            <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
             <button className="text-gray-400 hover:text-white transition-colors">
               Profile
             </button>
@@ -250,22 +334,83 @@ export default function StarnyxApp() {
         </div>
       </nav>
       
-      {/* Hero Section */}
-      <Hero featuredMovie={featuredMovie} />
+      {/* Conditional Content Based on Active Section */}
+      {activeSection === "home" && !searchTerm ? (
+        <>
+          {/* Hero Section */}
+          <Hero featuredMovie={featuredMovie} />
+          
+          {/* Content Rows */}
+          <div className="pb-20">
+            <MovieRow title="Trending Now" movies={trendingNow} size="lg" onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="New Releases" movies={newReleases} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Top Rated" movies={topRated} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="STARNYX Originals" movies={originals} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Action & Adventure" movies={actionMovies} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Dramas" movies={dramas} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Comedies" movies={comedies} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Sci-Fi & Fantasy" movies={sciFi} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Documentaries" movies={documentaries} onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+            <MovieRow title="Kids & Family" movies={kids} size="sm" onMoreInfo={handleMoreInfo} onAddToWatchlist={handleAddToWatchlist} />
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Grid View for Filtered Content */}
+          <div className="pt-24 px-8 pb-20">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold text-white mb-2">
+                {searchTerm ? `Search results for "${searchTerm}"` : 
+                 activeSection === "mylist" ? "My List" : activeSection}
+              </h1>
+              <p className="text-gray-400">
+                {filteredContent.length} {filteredContent.length === 1 ? 'title' : 'titles'} found
+              </p>
+            </div>
+            
+            {filteredContent.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-gray-400 text-lg">
+                  {activeSection === "mylist" ? "Your watchlist is empty" : "No results found"}
+                </p>
+                <p className="text-gray-500 mt-2">
+                  {activeSection === "mylist" ? "Add some movies and shows to get started!" : "Try adjusting your search terms"}
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {paginatedContent.map((movie) => (
+                    <MovieCard 
+                      key={movie.id} 
+                      movie={movie} 
+                      size="md" 
+                      onMoreInfo={handleMoreInfo}
+                      onAddToWatchlist={handleAddToWatchlist}
+                    />
+                  ))}
+                </div>
+                
+                {totalPages > 1 && (
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </>
+      )}
       
-      {/* Content Rows */}
-      <div className="pb-20">
-        <MovieRow title="Trending Now" movies={trendingNow} size="lg" />
-        <MovieRow title="New Releases" movies={newReleases} />
-        <MovieRow title="Top Rated" movies={topRated} />
-        <MovieRow title="STARNYX Originals" movies={originals} />
-        <MovieRow title="Action & Adventure" movies={actionMovies} />
-        <MovieRow title="Dramas" movies={dramas} />
-        <MovieRow title="Comedies" movies={comedies} />
-        <MovieRow title="Sci-Fi & Fantasy" movies={sciFi} />
-        <MovieRow title="Documentaries" movies={documentaries} />
-        <MovieRow title="Kids & Family" movies={kids} size="sm" />
-      </div>
+      {/* Movie Modal */}
+      <MovieModal 
+        movie={selectedMovie}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddToWatchlist={handleAddToWatchlist}
+      />
       
       {/* Footer */}
       <footer className="bg-black border-t border-gray-800 px-8 py-12">
@@ -273,8 +418,11 @@ export default function StarnyxApp() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Star className="text-blue-400 w-6 h-6" />
-                <h3 className="text-lg font-bold">STARNYX</h3>
+                <img 
+                  src="/lovable-uploads/4f557a03-47e6-462c-88e1-b192c9d1fa57.png" 
+                  alt="STARNYX" 
+                  className="h-6 w-auto"
+                />
               </div>
               <p className="text-gray-400 text-sm">
                 Premium streaming experience with over 5,000 titles.
