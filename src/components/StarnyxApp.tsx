@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SplashScreen from "./SplashScreen";
 import Navigation from "./Navigation";
 import Hero from "./Hero";
@@ -9,22 +9,35 @@ import MovieModal from "./MovieModal";
 import VideoModal from "./VideoModal";
 import Pagination from "./Pagination";
 import Footer from "./Footer";
+import WatchHistory from "./WatchHistory";
 import { generateContent } from "../utils/generateContent";
 
 export default function StarnyxApp() {
   const [content] = useState(() => generateContent());
   const [activeSection, setActiveSection] = useState("home");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("All");
   const [watchlist, setWatchlist] = useState([]);
+  const [watchHistory, setWatchHistory] = useState([]);
+  const [continueWatching, setContinueWatching] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [playingMovie, setPlayingMovie] = useState(null);
+  const [theme, setTheme] = useState('dark');
   const itemsPerPage = 20;
   
-  // Filter content based on active section and search term
+  // Initialize sample data
+  useEffect(() => {
+    const sampleHistory = content.slice(0, 5);
+    const sampleContinue = content.slice(5, 8);
+    setWatchHistory(sampleHistory);
+    setContinueWatching(sampleContinue);
+  }, [content]);
+  
+  // Filter content based on active section, search term, and genre
   const getFilteredContent = () => {
     let filtered = content;
     
@@ -33,6 +46,11 @@ export default function StarnyxApp() {
       filtered = watchlist;
     } else if (activeSection !== "home") {
       filtered = content.filter(item => item.category === activeSection);
+    }
+    
+    // Filter by genre
+    if (selectedGenre !== "All") {
+      filtered = filtered.filter(item => item.genre === selectedGenre);
     }
     
     // Filter by search term
@@ -73,16 +91,28 @@ export default function StarnyxApp() {
   const handlePlay = (movie) => {
     setPlayingMovie(movie);
     setVideoModalOpen(true);
+    
+    // Add to watch history
+    setWatchHistory(prev => {
+      const filtered = prev.filter(item => item.id !== movie.id);
+      return [movie, ...filtered].slice(0, 10);
+    });
   };
   
   const handleSectionChange = (section) => {
     setActiveSection(section);
     setCurrentPage(1);
     setSearchTerm("");
+    setSelectedGenre("All");
   };
   
   const handleSearchChange = (term) => {
     setSearchTerm(term);
+    setCurrentPage(1);
+  };
+  
+  const handleGenreFilter = (genre) => {
+    setSelectedGenre(genre);
     setCurrentPage(1);
   };
   
@@ -103,21 +133,38 @@ export default function StarnyxApp() {
   }
   
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className={`min-h-screen ${theme === 'royal' ? 'bg-gradient-to-br from-blue-900 via-black to-purple-900' : 'bg-black'} text-white transition-all duration-500`}>
       {/* Navigation */}
       <Navigation 
         activeSection={activeSection}
         watchlistCount={watchlist.length}
         searchTerm={searchTerm}
+        selectedGenre={selectedGenre}
+        theme={theme}
         onSectionChange={handleSectionChange}
         onSearchChange={handleSearchChange}
+        onGenreFilter={handleGenreFilter}
+        onThemeChange={setTheme}
       />
       
       {/* Conditional Content Based on Active Section */}
-      {activeSection === "home" && !searchTerm ? (
+      {activeSection === "home" && !searchTerm && selectedGenre === "All" ? (
         <>
           {/* Hero Section */}
-          <Hero featuredMovie={featuredMovie} onPlay={handlePlay} />
+          <Hero featuredMovie={featuredMovie} onPlay={handlePlay} theme={theme} />
+          
+          {/* Watch History */}
+          {(continueWatching.length > 0 || watchHistory.length > 0) && (
+            <div className="px-4 mb-8">
+              <WatchHistory 
+                continueWatching={continueWatching}
+                recentlyWatched={watchHistory}
+                onMoreInfo={handleMoreInfo}
+                onAddToWatchlist={handleAddToWatchlist}
+                onPlay={handlePlay}
+              />
+            </div>
+          )}
           
           {/* Content Rows */}
           <div className="pb-20">
@@ -140,6 +187,7 @@ export default function StarnyxApp() {
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-white mb-2">
                 {searchTerm ? `Search results for "${searchTerm}"` : 
+                 selectedGenre !== "All" ? `${selectedGenre} ${activeSection === "mylist" ? "in My List" : activeSection}` :
                  activeSection === "mylist" ? "My List" : activeSection}
               </h1>
               <p className="text-gray-400">
@@ -153,7 +201,7 @@ export default function StarnyxApp() {
                   {activeSection === "mylist" ? "Your watchlist is empty" : "No results found"}
                 </p>
                 <p className="text-gray-500 mt-2">
-                  {activeSection === "mylist" ? "Add some movies and shows to get started!" : "Try adjusting your search terms"}
+                  {activeSection === "mylist" ? "Add some movies and shows to get started!" : "Try adjusting your search terms or filters"}
                 </p>
               </div>
             ) : (

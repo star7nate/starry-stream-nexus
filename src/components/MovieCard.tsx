@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Star, Play, Plus, Info } from 'lucide-react';
+import { Star, Play, Plus, Info, Crown, TrendingUp } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface Movie {
@@ -40,13 +40,22 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
+
+  // Enhanced glow effect for premium cards
+  const getGlowClass = () => {
+    if (movie.isOriginal) return "shadow-blue-500/30";
+    if (movie.isTrending && movie.rating >= 8.5) return "shadow-yellow-500/30";
+    if (movie.isNew) return "shadow-red-500/30";
+    return "shadow-gray-500/20";
+  };
   
   return (
     <div 
       className={cn(
         "relative flex-shrink-0 rounded-xl overflow-hidden cursor-pointer transition-all duration-500 group",
         sizeClasses[size],
-        isHovered ? "scale-110 z-20 rotate-1 shadow-2xl shadow-blue-500/25" : "hover:scale-105"
+        isHovered ? "scale-110 z-20 rotate-1 shadow-2xl" : "hover:scale-105",
+        `hover:${getGlowClass()}`
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -55,7 +64,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
         transformStyle: 'preserve-3d'
       }}
     >
-      {/* Glassmorphism backdrop */}
+      {/* Enhanced glassmorphism backdrop */}
       <div className="absolute inset-0 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl" />
       
       <div className="w-full h-full relative">
@@ -63,44 +72,57 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
           src={movie.posterUrl} 
           alt={movie.title}
           className="w-full h-full object-cover transition-all duration-500 group-hover:brightness-110"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = `https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=450&fit=crop`;
+          }}
         />
         
-        {/* Dynamic gradient overlay */}
+        {/* Enhanced gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
-        {movie.isNew && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg animate-pulse">
-            NEW
-          </div>
-        )}
+        {/* Premium badges with glow */}
+        <div className="absolute top-2 left-2 space-y-1">
+          {movie.isOriginal && (
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg flex items-center gap-1 animate-pulse">
+              <Crown className="w-3 h-3" />
+              STARNYX
+            </div>
+          )}
+          {movie.isNew && (
+            <div className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg animate-pulse">
+              NEW
+            </div>
+          )}
+        </div>
         
         {movie.isTrending && (
-          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg">
-            #1
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-lg flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" />
+            #{Math.floor(Math.random() * 10) + 1}
           </div>
         )}
         
-        {/* Glassmorphism info panel */}
+        {/* Enhanced glassmorphism info panel */}
         <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 backdrop-blur-md border-t border-white/10">
           <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{movie.title}</h3>
           <div className="flex items-center justify-between text-xs text-gray-300">
             <span>{movie.year}</span>
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <span>{movie.rating}</span>
+              <span>{movie.rating.toFixed(1)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-400 mt-1">{movie.genre}</p>
         </div>
         
-        {/* Interactive overlay with microinteractions */}
+        {/* Enhanced interactive overlay with ripple effects */}
         {isHovered && (
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center animate-fade-in">
             <div className="flex gap-2">
               <button 
                 onClick={() => onPlay(movie)}
                 className="bg-white/90 backdrop-blur-sm text-black p-3 rounded-full hover:bg-white hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-white/25 ripple"
-                style={{ animation: 'ripple 0.6s linear' }}
               >
                 <Play className="w-4 h-4" />
               </button>
@@ -123,10 +145,14 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
           </div>
         )}
         
-        {/* Glow effect */}
+        {/* Enhanced glow effect */}
         <div className={cn(
-          "absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-0 transition-opacity duration-500",
-          isHovered && "opacity-20"
+          "absolute -inset-0.5 bg-gradient-to-r rounded-xl blur opacity-0 transition-opacity duration-500",
+          isHovered && "opacity-30",
+          movie.isOriginal && "from-blue-500 to-purple-500",
+          movie.isTrending && movie.rating >= 8.5 && "from-yellow-500 to-orange-500",
+          movie.isNew && "from-red-500 to-pink-500",
+          !movie.isOriginal && !movie.isNew && !(movie.isTrending && movie.rating >= 8.5) && "from-gray-500 to-gray-600"
         )} />
       </div>
     </div>

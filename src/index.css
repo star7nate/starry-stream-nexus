@@ -75,7 +75,7 @@
     -webkit-line-clamp: 2;
   }
 
-  /* Premium animations */
+  /* Enhanced premium animations */
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -99,8 +99,34 @@
     }
   }
 
+  @keyframes royal-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+    }
+  }
+
+  @keyframes card-hover {
+    0% {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1);
+    }
+    100% {
+      transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) scale(1.1);
+    }
+  }
+
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
+  }
+
+  .animate-royal-glow {
+    animation: royal-glow 2s ease-in-out infinite;
+  }
+
+  .animate-card-hover {
+    animation: card-hover 0.3s ease-out;
   }
 
   .ripple {
@@ -112,7 +138,7 @@
     animation: ripple 0.6s linear;
   }
 
-  /* Glassmorphism utilities */
+  /* Enhanced glassmorphism utilities */
   .glass {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -123,5 +149,45 @@
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-royal {
+    background: rgba(59, 130, 246, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  /* Premium button effects */
+  .btn-royal {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .btn-royal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+  }
+
+  /* Tab switching animations */
+  .tab-enter {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  .tab-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
+  }
+
+  .tab-exit {
+    opacity: 1;
+  }
+
+  .tab-exit-active {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 300ms, transform 300ms;
   }
 }
