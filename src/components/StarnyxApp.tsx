@@ -26,7 +26,7 @@ export default function StarnyxApp() {
   const [currentPage, setCurrentPage] = useState(1);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [playingMovie, setPlayingMovie] = useState(null);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState<'dark' | 'royal'>('dark');
   const itemsPerPage = 20;
   
   // Initialize sample data
@@ -151,7 +151,7 @@ export default function StarnyxApp() {
       {activeSection === "home" && !searchTerm && selectedGenre === "All" ? (
         <>
           {/* Hero Section */}
-          <Hero featuredMovie={featuredMovie} onPlay={handlePlay} theme={theme} />
+          <Hero featuredMovie={featuredMovie} onPlay={handlePlay} />
           
           {/* Watch History */}
           {(continueWatching.length > 0 || watchHistory.length > 0) && (
