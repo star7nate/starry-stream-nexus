@@ -1,4 +1,3 @@
-
 export const generateContent = () => {
   const movies = [
     // Netflix Originals & Popular Shows
@@ -13,7 +12,7 @@ export const generateContent = () => {
       isNew: true,
       isTrending: true,
       isOriginal: true,
-      posterUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=450&fit=crop&crop=face"
+      posterUrl: "/lovable-uploads/2d5a62e1-86ec-44d7-a39b-544ff12822fb.png"
     },
     {
       id: 2,
@@ -39,7 +38,7 @@ export const generateContent = () => {
       isNew: false,
       isTrending: false,
       isOriginal: false,
-      posterUrl: "https://images.unsplash.com/photo-1531384698654-7f6e297c1552?w=300&h=450&fit=crop"
+      posterUrl: "/lovable-uploads/1718a68a-1952-44f2-9891-c275421c9ff0.png"
     },
     {
       id: 4,
@@ -52,7 +51,7 @@ export const generateContent = () => {
       isNew: false,
       isTrending: true,
       isOriginal: true,
-      posterUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=450&fit=crop"
+      posterUrl: "/lovable-uploads/4b87809e-61ea-4428-a251-8dc095cd4f25.png"
     },
     {
       id: 5,
@@ -195,7 +194,7 @@ export const generateContent = () => {
       isNew: true,
       isTrending: true,
       isOriginal: false,
-      posterUrl: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=450&fit=crop"
+      posterUrl: "/lovable-uploads/2cca1d76-8b3a-4ebb-beaa-1c753f015f53.png"
     },
     {
       id: 16,
