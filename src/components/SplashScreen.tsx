@@ -61,7 +61,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div className={`fixed inset-0 bg-gradient-to-br from-black via-blue-900/20 to-purple-900/20 z-50 flex items-center justify-center transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`fixed inset-0 bg-gradient-to-br from-black via-blue-900/20 to-blue-900/20 z-50 flex items-center justify-center transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="relative">
         {/* Floating Crown */}
         <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 animate-bounce">
@@ -83,7 +83,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         </div>
         
         {/* Glowing orb effect */}
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-3xl transition-opacity duration-2000 ${showGlow ? 'opacity-100' : 'opacity-0'}`} />
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-blue-500/20 blur-3xl transition-opacity duration-2000 ${showGlow ? 'opacity-100' : 'opacity-0'}`} />
       </div>
     </div>
   );

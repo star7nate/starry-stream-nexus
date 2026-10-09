@@ -23,7 +23,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, isOpen, onClose, onAddTo
             <X className="w-5 h-5" />
           </button>
           
-          <div className="h-64 bg-gradient-to-r from-blue-900/40 via-purple-900/30 to-indigo-900/40 relative">
+          <div className="h-64 bg-gradient-to-r from-blue-900/40 via-blue-800/30 to-blue-700/40 relative">
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/50 to-transparent">
               <h2 className="text-3xl font-bold text-white mb-2">{movie.title}</h2>
               <div className="flex items-center gap-4 text-gray-300">

@@ -79,7 +79,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
         />
         
         {/* Enhanced gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Premium badges with glow */}
         <div className="absolute top-2 left-2 space-y-1">
@@ -149,7 +149,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, size = "md", onMoreInfo, o
         <div className={cn(
           "absolute -inset-0.5 bg-gradient-to-r rounded-xl blur opacity-0 transition-opacity duration-500",
           isHovered && "opacity-30",
-          movie.isOriginal && "from-blue-500 to-purple-500",
+          movie.isOriginal && "from-blue-400 to-blue-600",
           movie.isTrending && movie.rating >= 8.5 && "from-yellow-500 to-orange-500",
           movie.isNew && "from-red-500 to-pink-500",
           !movie.isOriginal && !movie.isNew && !(movie.isTrending && movie.rating >= 8.5) && "from-gray-500 to-gray-600"

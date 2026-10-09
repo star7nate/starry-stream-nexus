@@ -39,7 +39,7 @@ const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
       theme === 'royal' 
-        ? 'bg-gradient-to-r from-blue-900/80 via-purple-900/80 to-blue-900/80 backdrop-blur-md border-b border-blue-500/20' 
+        ? 'bg-gradient-to-r from-blue-900/80 via-blue-800/80 to-blue-900/80 backdrop-blur-md border-b border-blue-500/20'
         : 'bg-black/80 backdrop-blur-md border-b border-gray-800'
     }`}>
       <div className="px-8 py-4">
@@ -50,7 +50,7 @@ const Navigation: React.FC<NavigationProps> = ({
               <Crown className={`w-8 h-8 ${theme === 'royal' ? 'text-blue-400' : 'text-blue-500'} animate-pulse`} />
               <span className={`text-2xl font-bold ${
                 theme === 'royal' 
-                  ? 'bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent' 
+                  ? 'bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent'
                   : 'text-white'
               }`}>
                 STARNYX

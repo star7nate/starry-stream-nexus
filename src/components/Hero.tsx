@@ -22,7 +22,7 @@ const Hero: React.FC<HeroProps> = ({ featuredMovie, onPlay }) => {
       {/* Animated gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-purple-900/30 animate-pulse" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-blue-900/30 animate-pulse" />
       
       {/* Floating crown effect */}
       <div className="absolute top-20 right-20 animate-bounce">
@@ -35,7 +35,7 @@ const Hero: React.FC<HeroProps> = ({ featuredMovie, onPlay }) => {
           <span className="text-yellow-400 font-bold tracking-wider">PREMIUM</span>
         </div>
         
-        <h1 className="text-6xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent animate-pulse bg-[length:200%_100%]">
+        <h1 className="text-6xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-400 bg-clip-text text-transparent animate-pulse bg-[length:200%_100%]">
           {featuredMovie.title}
         </h1>
         
@@ -51,7 +51,7 @@ const Hero: React.FC<HeroProps> = ({ featuredMovie, onPlay }) => {
           </div>
           <span className="text-gray-300">{featuredMovie.year}</span>
           <span className="text-gray-300">{featuredMovie.duration}</span>
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+          <span className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             {featuredMovie.genre}
           </span>
         </div>

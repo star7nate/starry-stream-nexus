@@ -133,7 +133,7 @@ export default function StarnyxApp() {
   }
   
   return (
-    <div className={`min-h-screen ${theme === 'royal' ? 'bg-gradient-to-br from-blue-900 via-black to-purple-900' : 'bg-black'} text-white transition-all duration-500`}>
+    <div className={`min-h-screen ${theme === 'royal' ? 'bg-gradient-to-br from-blue-900 via-black to-blue-900' : 'bg-black'} text-white transition-all duration-500`}>
       {/* Navigation */}
       <Navigation 
         activeSection={activeSection}
